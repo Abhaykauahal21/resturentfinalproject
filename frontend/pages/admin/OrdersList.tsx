@@ -89,7 +89,7 @@ const OrdersList: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      {/* <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {filteredOrders.length === 0 ? (
           <div className="col-span-full py-20 text-center bg-white dark:bg-gray-900 rounded-[32px] border-2 border-dashed border-gray-100 dark:border-gray-800">
             <i className="fas fa-inbox text-4xl text-gray-200 mb-4"></i>
@@ -129,7 +129,102 @@ const OrdersList: React.FC = () => {
             </div>
           </div>
         ))}
+      </div> */}
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+  {filteredOrders.length === 0 ? (
+    <div className="col-span-full py-20 text-center bg-white dark:bg-gray-900 rounded-[32px] border-2 border-dashed border-gray-100 dark:border-gray-800">
+      <i className="fas fa-inbox text-4xl text-gray-200 mb-4"></i>
+      <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
+        No active orders
+      </p>
+    </div>
+  ) : (
+    filteredOrders.map(order => (
+      <div
+        key={order.id}
+        className="bg-white dark:bg-gray-900 p-5 rounded-[24px] border border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-xl transition-all group"
+      >
+        {/* LEFT SECTION */}
+        <div className="flex items-start space-x-4 min-w-0 flex-1">
+          {/* TABLE BADGE */}
+          <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl flex flex-col items-center justify-center font-black shrink-0 transition-transform group-hover:scale-110">
+            <span className="text-[10px] uppercase opacity-60">Table</span>
+            <span className="text-xl leading-none">{order.table}</span>
+          </div>
+
+          {/* ORDER DETAILS */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-lg dark:text-white truncate">
+              #{order.id.slice(-6).toUpperCase()}
+            </h3>
+
+            {/* ORDER ITEMS LIST */}
+            <div className="mt-2 bg-gray-50 dark:bg-gray-800/60 rounded-xl p-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+                Order Items
+              </p>
+
+              <ul className="space-y-1 max-h-28 overflow-y-auto pr-1">
+                {order.itemsList
+                  .split(',')
+                  .map((item, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start text-sm text-gray-700 dark:text-gray-300"
+                    >
+                      <span className="mr-2 text-orange-500 font-black">•</span>
+                      <span className="leading-snug">
+                        {item.trim()}
+                      </span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* PRICE & TIME */}
+            <p className="mt-2 text-xs font-bold text-orange-500">
+              ₹{order.total.toFixed(2)} • {order.time}
+            </p>
+          </div>
+        </div>
+
+        {/* RIGHT SECTION */}
+        <div className="flex items-center justify-between sm:justify-end gap-4">
+          <span
+            className={`inline-block px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider ${
+              order.status === OrderStatus.SERVED
+                ? 'bg-green-100 text-green-600'
+                : 'bg-orange-100 text-orange-600'
+            }`}
+          >
+            {order.status}
+          </span>
+
+          <button
+              onClick={() => updateStatus(order.id)}
+              disabled={order.status === OrderStatus.SERVED}
+              className="
+                h-11 px-6 
+                bg-orange-500 hover:bg-orange-600 
+                active:bg-orange-700
+                text-white font-black 
+                rounded-xl 
+                text-[10px] uppercase tracking-widest
+                transition-all duration-150 ease-out
+                active:scale-95
+                disabled:opacity-30
+                disabled:cursor-not-allowed"> Next Status
+          </button>
+
+        </div>
       </div>
+    ))
+  )}
+</div>
+
+
+      
     </div>
   );
 };

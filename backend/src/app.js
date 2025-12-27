@@ -18,12 +18,26 @@ function createApp() {
   );
   app.use(express.json({ limit: '1mb' }));
 
-  app.get('/api/health', (req, res) => res.json({ ok: true }));
+  const healthResponse = () => {
+    const missing = [];
+    if (!process.env.MONGODB_URI) missing.push('MONGODB_URI');
+    if (!process.env.JWT_SECRET) missing.push('JWT_SECRET');
+    return { ok: missing.length === 0, missing };
+  };
+
+  app.get('/', (req, res) => res.json({ service: 'quickserve-backend', ...healthResponse() }));
+  app.get('/health', (req, res) => res.json(healthResponse()));
+  app.get('/api/health', (req, res) => res.json(healthResponse()));
 
   app.use('/api/auth', authRoutes);
   app.use('/api/menu', menuRoutes);
   app.use('/api/orders', orderRoutes);
   app.use('/api/settings', settingsRoutes);
+
+  app.use('/auth', authRoutes);
+  app.use('/menu', menuRoutes);
+  app.use('/orders', orderRoutes);
+  app.use('/settings', settingsRoutes);
 
   app.use((err, req, res, next) => {
     const status = err.statusCode || 500;

@@ -5,11 +5,11 @@ const rawBaseUrl = (import.meta as any)?.env?.VITE_API_BASE_URL;
 const isProd = Boolean((import.meta as any)?.env?.PROD);
 let apiBaseUrl = typeof rawBaseUrl === 'string' && rawBaseUrl.trim().length > 0 ? rawBaseUrl.trim() : '/api';
 
-if (apiBaseUrl === '/api' && isProd && typeof window !== 'undefined') {
+if (apiBaseUrl === '/api' && typeof window !== 'undefined') {
   const host = String(window.location.hostname || '').toLowerCase();
-  if (host.endsWith('onrender.com')) {
-    apiBaseUrl = 'https://resturentfinal.onrender.com/api';
-  }
+  const isLocal = host === 'localhost' || host === '127.0.0.1';
+  const looksDeployed = isProd || !isLocal;
+  if (looksDeployed) apiBaseUrl = 'https://resturentfinal.onrender.com/api';
 }
 
 apiBaseUrl = apiBaseUrl.replace(/\/+$/, '');

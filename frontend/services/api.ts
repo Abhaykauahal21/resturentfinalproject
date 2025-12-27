@@ -1,10 +1,21 @@
 
 import axios, { AxiosHeaders } from 'axios';
 
-const API_BASE_URL = (import.meta as any)?.env?.VITE_API_BASE_URL || '/api';
+const rawBaseUrl = (import.meta as any)?.env?.VITE_API_BASE_URL;
+const isProd = Boolean((import.meta as any)?.env?.PROD);
+let apiBaseUrl = typeof rawBaseUrl === 'string' && rawBaseUrl.trim().length > 0 ? rawBaseUrl.trim() : '/api';
+
+if (apiBaseUrl === '/api' && isProd && typeof window !== 'undefined') {
+  const host = String(window.location.hostname || '').toLowerCase();
+  if (host.endsWith('onrender.com')) {
+    apiBaseUrl = 'https://resturentfinal.onrender.com/api';
+  }
+}
+
+apiBaseUrl = apiBaseUrl.replace(/\/+$/, '');
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
